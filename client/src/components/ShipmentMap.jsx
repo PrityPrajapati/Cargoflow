@@ -26,29 +26,28 @@ const ShipmentMarker = ({ shipment, onClick, settings }) => {
 
     // Generate Icon based on type
     const getIcon = () => {
-        const size = settings.markerSize === 'large' ? [40, 40] :
-            settings.markerSize === 'small' ? [20, 20] : [30, 30];
+        const sizeValue = settings.markerSize === 'large' ? 40 :
+            settings.markerSize === 'small' ? 20 : 30;
 
-        // Choose icon color based on Map Style to ensure contrast
-        const isDarkMap = settings.mapStyle === 'dark' || settings.mapStyle === 'satellite';
+        // Default emoji
+        let emoji = '✈️';
+        if (shipment.type === 'Sea') emoji = '🚢';
+        if (shipment.type === 'Land') emoji = '🚛';
 
-        // Default to Plane
-        let iconUrl = 'https://img.icons8.com/color/96/airplane-mode-on.png';
-
-        // If explicitly Sea, show Ship
-        if (shipment.type === 'Sea') {
-            // Use white icon for dark maps, black for light maps
-            iconUrl = isDarkMap
-                ? 'https://img.icons8.com/ios-filled/100/ffffff/cargo-ship.png'
-                : 'https://img.icons8.com/ios-filled/100/000000/cargo-ship.png';
-        }
-
-        return new L.Icon({
-            iconUrl,
-            iconSize: size,
-            iconAnchor: [size[0] / 2, size[1] / 2],
-            popupAnchor: [0, -size[1] / 2],
-            className: `transition-all duration-300 ${isHovered ? 'drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] scale-110' : ''}`
+        return L.divIcon({
+            html: `<div style="
+                font-size: ${sizeValue}px; 
+                line-height: ${sizeValue}px; 
+                text-align: center;
+                filter: ${isHovered ? 'drop-shadow(0 0 8px rgba(255,255,255,0.8))' : 'none'};
+                transform: ${isHovered ? 'scale(1.3)' : 'scale(1)'};
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+            ">${emoji}</div>`,
+            className: '', // Clear default leaflet styles
+            iconSize: [sizeValue, sizeValue],
+            iconAnchor: [sizeValue / 2, sizeValue / 2],
+            popupAnchor: [0, -sizeValue / 2],
         });
     };
 
